@@ -129,11 +129,11 @@ module Metrc
       raise Errors::NotFound.new("Package `#{label}` not found") if response.parsed_response.nil?
       api_post(
         "/labtests/v1/record?licenseNumber=#{license_number}",
-        body: {
+        body: [{
           'Label'      => label,
           'ResultDate' => results_date,
           'Results'    => sanitize(results)
-        }.to_json
+        }].to_json
       )
     end
 
