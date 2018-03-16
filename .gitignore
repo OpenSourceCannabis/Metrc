@@ -1,0 +1,13 @@
+/.bundle/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+
+spec/spec_CA_credentials.yml
+spec/spec_OR_credentials.yml
+API_Validation/*
