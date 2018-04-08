@@ -16,6 +16,14 @@ module Metrc
       sign_in
     end
 
+    ## CIM Common Interface Methods
+    ## Metrc / BioTrackTHC / LeafData
+
+    def retrieve(barcode)
+      get_package(barcode)
+      response.parsed_response.is_a?(Hash) ? response.parsed_response : nil
+    end
+
     def api_get(url, options = {})
       options.merge!(basic_auth: auth_headers)
       puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug
