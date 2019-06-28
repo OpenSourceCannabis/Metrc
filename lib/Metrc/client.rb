@@ -54,6 +54,16 @@ module Metrc
       end
     end
 
+    def api_put(url, options = {})
+      options.merge!(basic_auth: auth_headers)
+      puts "\nMetrc API Request debug\nclient.put('#{url}', #{options})\n########################\n" if debug
+      self.response = self.class.put(url, options)
+      if debug
+        puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
+        response
+      end
+    end
+
     # GET
     def get_room(id)
       get(:rooms, id)
@@ -91,6 +101,18 @@ module Metrc
 
     def create_strains(license_number, resources)
       create(:strains, license_number, resources)
+    end
+
+    def create_plant_batches(license_number, resources)
+      api_post("/plantbatches/v1/createplantings?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
+    def move_plant_batches(license_number, resources)
+      api_put("/plantbatches/v1/moveplantbatches?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
+    def change_growth_phase(license_number, resources)
+      api_post("/plantbatches/v1/changegrowthphase?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
     def create(resource, license_number, resources)
