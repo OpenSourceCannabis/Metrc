@@ -115,6 +115,10 @@ module Metrc
       api_post("/plantbatches/v1/changegrowthphase?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def destroy_plant_batches(license_number, resources)
+      api_post("/plantbatches/v1/destroy?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def create(resource, license_number, resources)
       api_post("/#{resource}/v1/create?licenseNumber=#{license_number}", body: resources.to_json)
     end
