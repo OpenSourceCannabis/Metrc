@@ -8,10 +8,12 @@ module Metrc
 
     attr_accessor :debug,
                   :response,
+                  :user_key
                   :parsed_response
 
     def initialize(opts = {})
       self.debug = opts[:debug]
+      self.user_key = opts[:user_key]
       self.class.base_uri configuration.base_uri
       sign_in
     end
@@ -183,7 +185,8 @@ module Metrc
     private
 
     def auth_headers
-      { username: configuration.api_key, password: configuration.user_key }
+      # change configuration.user_key to use database user_key
+      { username: configuration.api_key, password: user_key }
     end
 
     def sign_in
