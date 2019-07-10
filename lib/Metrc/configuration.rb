@@ -8,7 +8,7 @@ module Metrc
                   :results
 
     def incomplete?
-      [:api_key, :user_key, :base_uri, :state].any? { |e| self.send(e).nil? }
+      [:api_key, :base_uri, :state].any? { |e| self.send(e).nil? }
     end
 
   end
