@@ -30,6 +30,7 @@ module Metrc
       options.merge!(basic_auth: auth_headers)
       puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.get(url, options)
+      raise_request_errors
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
         response
@@ -40,6 +41,7 @@ module Metrc
       options.merge!(basic_auth: auth_headers)
       puts "\nMetrc API Request debug\nclient.post('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.post(url, options)
+      raise_request_errors
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
         response
@@ -50,6 +52,7 @@ module Metrc
       options.merge!(basic_auth: auth_headers)
       puts "\nMetrc API Request debug\nclient.delete('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.delete(url, options)
+      raise_request_errors
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
         response
@@ -60,6 +63,7 @@ module Metrc
       options.merge!(basic_auth: auth_headers)
       puts "\nMetrc API Request debug\nclient.put('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.put(url, options)
+      raise_request_errors
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
         response
@@ -196,6 +200,16 @@ module Metrc
 
     def configuration
       Metrc.configuration
+    end
+
+    def raise_request_errors
+      return if response.success?
+      raise Errors::BadRequest.new("An error has occurred while executing your request. #{Metrc::Errors.parse_request_errors(response: response)}") if response.bad_request?
+      raise Errors::Unauthorized.new('Invalid or no authentication provided.') if response.unauthorized?
+      raise Errors::Forbidden.new('The authenticated user does not have access to the requested resource.') if response.forbidden?
+      raise Errors::NotFound.new('The requested resource could not be found (incorrect or invalid URI).') if response.not_found?
+      raise Errors::TooManyRequests.new('The limit of API calls allowed has been exceeded. Please pace the usage rate of the API more apart.') if response.too_many_requests?
+      raise Errors::InternalServerError.new('An error has occurred while executing your request.') if response.server_error?
     end
   end
 end
