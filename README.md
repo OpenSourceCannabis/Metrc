@@ -6,8 +6,8 @@
 Metrc.configure do |config|
   config.api_key = '...'
   config.user_key = '...'
-  config.base_uri = 'https://sandbox-api-ca.metrc.com'
   config.state = :ca
+  config.sandbox = [true|false]
 end
 
 client = Metrc::Client.new(debug: true)
