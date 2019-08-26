@@ -9,7 +9,6 @@ describe Metrc do
 
   it 'accepts a configuration, requires a complete configuration' do
     Metrc.configure do |config|
-      config.base_uri = nil
       config.state  = nil
     end
 
@@ -20,7 +19,6 @@ describe Metrc do
 
   it 'does not initialize without credentials' do
     Metrc.configure do |config|
-      config.base_uri = nil
       config.state = nil
     end
 
@@ -28,10 +26,25 @@ describe Metrc do
       .to(raise_error(Metrc::Errors::MissingConfiguration))
   end
 
-  it 'initializes with credentials' do
+  it 'builds a sandbox base URI' do
+    Metrc.configure do |config|
+      config.sandbox = true
+      config.state   = :ca
+    end
 
-    expect { Metrc::Client.new }
-      .not_to raise_error
+    client = Metrc::Client.new
+
+    expect(client.uri).to eq('https://sandbox-api-ca.metrc.com')
+  end
+
+  it 'builds a production base URI' do
+    Metrc.configure do |config|
+      config.state = :ca
+    end
+
+    client = Metrc::Client.new
+
+    expect(client.uri).to eq('https://api-ca.metrc.com')
   end
 
   # it 'communicates with the API to get users' do

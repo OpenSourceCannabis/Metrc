@@ -8,13 +8,14 @@ module Metrc
 
     attr_accessor :debug,
                   :response,
-                  :user_key
-                  :parsed_response
+                  :user_key,
+                  :parsed_response,
+                  :uri
 
     def initialize(opts = {})
       self.debug = opts[:debug]
       self.user_key = opts[:user_key]
-      self.class.base_uri configuration.base_uri
+      self.class.base_uri build_uri
       sign_in
     end
 
@@ -200,6 +201,19 @@ module Metrc
 
     def configuration
       Metrc.configuration
+    end
+
+    def build_uri
+      return self.uri if self.uri
+      config   = configuration
+      self.uri = "api-#{config.state}.metrc.com"
+
+      if config.sandbox
+        self.uri.prepend('sandbox-')
+      end
+
+      self.uri.prepend('https://')
+      self.uri
     end
 
     def raise_request_errors

@@ -14,7 +14,7 @@ describe Metrc::Client do
     let(:body) { "" }
 
     before(:each) do
-      stub_request(:post, "#{$spec_credentials['base_uri']}#{api_url}")
+      stub_request(:post, "#{subject.uri}#{api_url}")
         .to_return(status: status, body: body, headers: { 'content-type': 'application/json' })
     end
 

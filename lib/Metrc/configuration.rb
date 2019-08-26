@@ -2,13 +2,13 @@ module Metrc
   class Configuration
     attr_accessor :api_key,
                   :user_key,
-                  :base_uri,
                   :state,
                   :training,
-                  :results
+                  :results,
+                  :sandbox
 
     def incomplete?
-      [:api_key, :base_uri, :state].any? { |e| self.send(e).nil? }
+      [:api_key, :state].any? { |e| self.send(e).nil? }
     end
 
   end
