@@ -88,6 +88,10 @@ module Metrc
       api_get("/#{resource}/v1/#{resource_id}")
     end
 
+    def post(resource, resource_id, license_number, resources)
+      api_post("/#{resource}/v1/#{resource_id}?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     # LIST
     def list_rooms(license_number)
       list(:rooms, license_number)
@@ -176,6 +180,23 @@ module Metrc
           'Results'    => sanitize(results)
         }].to_json
       )
+    end
+
+    # PLANTS
+    def move_plants(license_number, resources)
+      post(:plants, :moveplants, license_number, resources)
+    end
+
+    def destroy_plants(license_number, resources)
+      post(:plants, :destroyplants, license_number, resources)
+    end
+
+    def manicure_plants(license_number, resources)
+      post(:plants, :manicureplants, license_number, resources)
+    end
+
+    def manicure_plants(license_number, resources)
+      post(:plants, :harvestplants, license_number, resources)
     end
 
     def sanitize(results)
