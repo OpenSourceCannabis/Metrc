@@ -195,7 +195,7 @@ module Metrc
       post(:plants, :manicureplants, license_number, resources)
     end
 
-    def manicure_plants(license_number, resources)
+    def harvest_plants(license_number, resources)
       post(:plants, :harvestplants, license_number, resources)
     end
 
