@@ -6,9 +6,9 @@ describe Metrc::Client do
   end
 
   let(:subject) { described_class.new(user_key: $spec_credentials['user_key']) }
+  let(:licenseNumber) { 'CML17-0000001' }
 
   describe '#api_post' do
-    let(:licenseNumber) { 'CML17-0000001' }
     let(:api_url) { "/foo/v1/bar?licenseNumber=#{licenseNumber}" }
     let(:api_post) { subject.api_post(api_url) }
     let(:body) { "" }
@@ -79,6 +79,19 @@ describe Metrc::Client do
       #    expect { api_post }.to(raise_error('No data was submitted.'))
       #  end
       #end
+    end
+  end
+
+  describe '#change_plant_growth_phase' do
+    before(:each) do
+      content_type = { 'content-type': 'application/json' }
+      stub_request(:post, "#{subject.uri}/plants/v1/changegrowthphases?licenseNumber=#{licenseNumber}")
+        .with(headers: content_type)
+        .to_return(body: nil)
+    end
+
+    it 'calls the endpoint' do
+      expect { subject.change_plant_growth_phase(licenseNumber, []) }.not_to raise_error
     end
   end
 end

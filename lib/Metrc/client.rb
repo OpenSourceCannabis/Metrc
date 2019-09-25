@@ -199,6 +199,10 @@ module Metrc
       post(:plants, :harvestplants, license_number, resources)
     end
 
+    def change_plant_growth_phase(license_number, resources)
+      post(:plants, :changegrowthphases, license_number, resources)
+    end
+
     def sanitize(results)
       allowed_test_types = labtest_types.map{|el| el['Name']}
       results.reject{|result| !allowed_test_types.include?(result[:LabTestTypeName])}
