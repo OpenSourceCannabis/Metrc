@@ -3,20 +3,21 @@
 require 'bundler/setup'
 require 'yaml'
 
-# $spec_credentials = YAML.load_file('./spec/spec_OR_credentials.yml')
-$spec_credentials = YAML.load_file('./spec/spec_CA_credentials.yml')
+# credentials = YAML.load_file('./ignore/spec_OR_credentials.yml')
+# credentials = YAML.load_file('./ignore/spec_CA_credentials.yml')
+credentials = YAML.load_file('./ignore/CA_credentials.yml')
 
 require 'Metrc'
 
 Metrc.configure do |config|
-  config.api_key  = $spec_credentials['api_key']
-  config.user_key = $spec_credentials['user_key']
-  config.base_uri = $spec_credentials['base_uri']
-  config.state    = $spec_credentials['state']
+  config.api_key        = credentials['api_key']
+  config.user_key       = credentials['user_key']
+  config.license_number = credentials['license_number']
+  config.base_uri       = credentials['base_uri']
+  config.state          = credentials['state']
 end
-
 
 $client = Metrc::Client.new(debug: true)
 
-require "pry"
+require 'pry'
 Pry.start

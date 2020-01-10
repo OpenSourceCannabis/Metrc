@@ -25,7 +25,7 @@ module Metrc
     end
 
     def api_get(url, options = {})
-      options.merge!(basic_auth: auth_headers)
+      options[:basic_auth] = auth_headers
       puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.get(url, options)
       if debug
@@ -35,7 +35,7 @@ module Metrc
     end
 
     def api_post(url, options = {})
-      options.merge!(basic_auth: auth_headers)
+      options[:basic_auth] = auth_headers
       puts "\nMetrc API Request debug\nclient.post('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.post(url, options)
       if debug
@@ -45,7 +45,7 @@ module Metrc
     end
 
     def api_delete(url, options = {})
-      options.merge!(basic_auth: auth_headers)
+      options[:basic_auth] = auth_headers
       puts "\nMetrc API Request debug\nclient.delete('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.delete(url, options)
       if debug
@@ -72,55 +72,63 @@ module Metrc
     end
 
     # LIST
-    def list_rooms(license_number)
-      list(:rooms, license_number)
+    def list_rooms
+      list(:rooms)
     end
 
-    def list_strains(license_number)
-      list(:strains, license_number)
+    def list_strains
+      list(:strains)
     end
 
-    def list(resource, license_number)
-      api_get("/#{resource}/v1/active?licenseNumber=#{license_number}").sort_by{|el| el['Id']}
+    def list_packages
+      list(:packages)
+    end
+
+    def list_manifests
+      api_get("/transfers/v1/incoming?licenseNumber=#{configuration.license_number}").sort_by{|el| el['Id']}
+    end
+
+    def list(resource)
+      api_get("/#{resource}/v1/active?licenseNumber=#{configuration.license_number}").sort_by{ |el| el['Id'] }
     end
 
     # CREATE
-    def create_rooms(license_number, resources)
-      create(:rooms, license_number, resources)
+    def create_rooms(resources)
+      create(:rooms, resources)
     end
 
-    def create_strains(license_number, resources)
-      create(:strains, license_number, resources)
+    def create_strains(resources)
+      create(:strains, resources)
     end
 
-    def create(resource, license_number, resources)
-      api_post("/#{resource}/v1/create?licenseNumber=#{license_number}", body: resources.to_json)
+    def create(resource, resources)
+      api_post("/#{resource}/v1/create?licenseNumber=#{configuration.license_number}", body: resources.to_json)
     end
 
     # UPDATE
-    def update_rooms(license_number, resources)
-      update(:rooms, license_number, resources)
+    def update_rooms(resources)
+      update(:rooms, resources)
     end
 
-    def update_strains(license_number, resources)
-      update(:strains, license_number, resources)
+    def update_strains(resources)
+      update(:strains, resources)
     end
 
-    def update(resource, license_number, resources)
-      api_post("/#{resource}/v1/update?licenseNumber=#{license_number}", body: resources.to_json)
+    def update(resource, resources)
+      api_post("/#{resource}/v1/update?licenseNumber=#{configuration.license_number}", body: resources.to_json)
     end
 
     # DELETE
-    def delete_room(license_number, id)
-      delete(:rooms, license_number, id)
+    def delete_room(id)
+      delete(:rooms, id)
     end
 
-    def delete_strain(license_number, id)
-      delete(:strains, license_number, id)
+    def delete_strain(id)
+      delete(:strains, id)
     end
 
-    def delete(resource, license_number, resource_id)
-      api_delete("/#{resource}/v1/#{resource_id}?licenseNumber=#{license_number}")
+    def delete(resource, resource_id)
+      api_delete("/#{resource}/v1/#{resource_id}?licenseNumber=#{configuration.license_number}")
     end
 
     # LABORATORY RESULTS
@@ -129,25 +137,26 @@ module Metrc
     end
 
     def labtest_types
-      @labtest_types ||= api_get('/labtests/v1/types').sort_by{|el| el['Id']}
+      @labtest_types ||= api_get('/labtests/v1/types').sort_by { |el| el['Id'] }
     end
 
-    def create_results(label, license_number, results = [], results_date = Time.now.utc.iso8601)
+    def create_results(label, results = [], results_date = Time.now.utc.iso8601)
       get_package(label)
       raise Errors::NotFound.new("Package `#{label}` not found") if response.parsed_response.nil?
+      
       api_post(
-        "/labtests/v1/record?licenseNumber=#{license_number}",
+        "/labtests/v1/record?licenseNumber=#{configuration.license_number}",
         body: [{
-          'Label'      => label,
+          'Label' => label,
           'ResultDate' => results_date,
-          'Results'    => sanitize(results)
+          'Results' => sanitize(results)
         }].to_json
       )
     end
 
     def sanitize(results)
-      allowed_test_types = labtest_types.map{|el| el['Name']}
-      results.reject{|result| !allowed_test_types.include?(result[:LabTestTypeName])}
+      allowed_test_types = labtest_types.map { |el| el['Name'] }
+      results.select { |result| allowed_test_types.include?(result[:LabTestTypeName]) }
     end
 
     def signed_in?
@@ -157,11 +166,15 @@ module Metrc
     private
 
     def auth_headers
-      { username: configuration.api_key, password: configuration.user_key }
+      {
+        username: configuration.api_key.strip, 
+        password: configuration.user_key.strip
+      }
     end
 
     def sign_in
       raise Errors::MissingConfiguration if configuration.incomplete?
+
       true
     end
 
