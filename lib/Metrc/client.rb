@@ -24,6 +24,10 @@ module Metrc
       response.parsed_response.is_a?(Hash) ? response.parsed_response : nil
     end
 
+    def inbox
+      list_manifests
+    end
+
     def api_get(url, options = {})
       options[:basic_auth] = auth_headers
       puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug

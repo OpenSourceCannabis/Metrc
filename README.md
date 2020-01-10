@@ -3,31 +3,38 @@
 ## Usage
 
 ```ruby
+require 'Metrc'
+
 Metrc.configure do |config|
-  config.api_key = '...'
-  config.user_key = '...'
-  config.base_uri = 'https://sandbox-api-ca.metrc.com'
-  config.state = :ca
+  config.api_key        = credentials['api_key'] # vendor/integrator key (assigned by Metrc)
+  config.user_key       = credentials['user_key'] # programmatic access API key (user generated)
+  config.license_number = credentials['license_number'] # license number 
+  config.base_uri       = credentials['base_uri'] # base URI of the API 
+  config.state          = credentials['state']
 end
 
 client = Metrc::Client.new(debug: true)
-client.get(:packages, '1A4FF0300000026000000010')
-```
 
-```
-Metrc API Request debug
-client.get('/packages/v1/1A4FF0300000026000000010', {:basic_auth=>{:username=>"...", :password=>"..."}})
-########################
+client.retrive('1A4FF0300000026000000010') # gets a specific package
 
-Metrc API Response debug
-{"Id":4902,"Label":"1A4FF0300000026000000010","PackageType":"Product","SourceHarvestNames":"","RoomId":null,"RoomName":null,"Quantity":2.0000,"UnitOfMeasureName":"Each","UnitOfMeasureAbbreviation":"ea","ProductId":3302,"ProductName":"BK Test Item Kush New","ProductCategoryName":"Capsule/Tablet","PackagedDate":"2018-02-13","InitialLabTestingState":"AwaitingCon[...]
-[200 OK]
-########################
+client.inbox # lists incoming transfers
+
+results = [
+  { 
+    LabTestTypeName: 'Terpenoids (mg/g) (Flower) [Phase 3]',
+    Quantity: 23.17,
+    Passed: true,
+    Notes: 'LabFlow CannabisLIMS'
+  }
+]
+
+client.create_results('1A4FF0100000027000003415', results) # POST laboratory results
 ```
 
 See ```./lib/Metrc/client.rb``` for implemented endpoints.
 
 Metrc (CA) API Docs https://api-ca.metrc.com/Documentation
+LabFlow Cannabis LIMS https://CannabisLIMS.com
 
 ## License
 
