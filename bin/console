@@ -19,5 +19,7 @@ end
 
 $client = Metrc::Client.new(debug: true)
 
+# $client = Metrc::Client.init(credentials)
+
 require 'pry'
 Pry.start

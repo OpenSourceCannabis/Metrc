@@ -12,8 +12,10 @@ Metrc.configure do |config|
   config.base_uri       = credentials['base_uri'] # base URI of the API 
   config.state          = credentials['state']
 end
-
 client = Metrc::Client.new(debug: true)
+
+# alternatively
+client = Metrc::Client.init(credentials)
 
 client.retrive('1A4FF0300000026000000010') # gets a specific package
 

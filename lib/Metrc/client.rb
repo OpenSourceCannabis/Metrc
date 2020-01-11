@@ -10,6 +10,19 @@ module Metrc
                   :response,
                   :parsed_response
 
+    def self.init(credentials)
+
+      Metrc.configure do |config|
+        config.api_key = credentials['api_key'] if credentials['api_key']
+        config.user_key = credentials['user_key'] if credentials['user_key']
+        config.license_number = credentials['license_number'] if credentials['license_number']
+        config.base_uri = credentials['base_uri'] if credentials['base_uri']
+        config.state = credentials['state'] if credentials['state']
+      end
+
+      new
+    end
+
     def initialize(opts = {})
       self.debug = opts[:debug]
       self.class.base_uri configuration.base_uri
@@ -159,8 +172,9 @@ module Metrc
     end
 
     def sanitize(results)
-      allowed_test_types = labtest_types.map { |el| el['Name'] }
-      results.select { |result| allowed_test_types.include?(result[:LabTestTypeName]) }
+      results
+      # allowed_test_types = labtest_types.map { |el| el['Name'] }
+      # results.select { |result| allowed_test_types.include?(result[:LabTestTypeName]) }
     end
 
     def signed_in?
