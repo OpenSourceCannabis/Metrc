@@ -101,8 +101,10 @@ module Metrc
       list(:packages)
     end
 
-    def list_manifests
-      api_get("/transfers/v1/incoming?licenseNumber=#{configuration.license_number}").sort_by{|el| el['Id']}
+    def list_manifests(start_date = nil, end_date = nil)
+      start_date ||= days_ago(1)
+      end_date ||= today
+      api_get("/transfers/v1/incoming?licenseNumber=#{configuration.license_number}&lastModifiedStart=#{start_date}&lastModifiedEnd=#{end_date}").sort_by{|el| el['Id']}
     end
 
     def list(resource)
@@ -182,6 +184,14 @@ module Metrc
     end
 
     private
+
+    def today
+      Time.now.strftime('%F')
+    end
+
+    def days_ago(count)
+      (Time.now - 86_400 * count).strftime('%F')
+    end
 
     def auth_headers
       {
