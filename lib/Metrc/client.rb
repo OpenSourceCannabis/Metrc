@@ -43,32 +43,32 @@ module Metrc
 
     def api_get(url, options = {})
       options[:basic_auth] = auth_headers
+
       puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.get(url, options)
-      if debug
-        puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
-      end
+      puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n" if debug
+
+      response
     end
 
     def api_post(url, options = {})
       options[:basic_auth] = auth_headers
+
       puts "\nMetrc API Request debug\nclient.post('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.post(url, options)
-      if debug
-        puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
-      end
+      puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n" if debug
+
+      response
     end
 
     def api_delete(url, options = {})
       options[:basic_auth] = auth_headers
+
       puts "\nMetrc API Request debug\nclient.delete('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.delete(url, options)
-      if debug
-        puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
-      end
+      puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n" if debug
+
+      response
     end
 
     # GET
@@ -162,7 +162,7 @@ module Metrc
     def create_results(label, results = [], results_date = Time.now.utc.iso8601)
       get_package(label)
       raise Errors::NotFound.new("Package `#{label}` not found") if response.parsed_response.nil?
-      
+
       api_post(
         "/labtests/v1/record?licenseNumber=#{configuration.license_number}",
         body: [{
@@ -195,7 +195,7 @@ module Metrc
 
     def auth_headers
       {
-        username: configuration.api_key.strip, 
+        username: configuration.api_key.strip,
         password: configuration.user_key.strip
       }
     end
