@@ -97,14 +97,18 @@ module Metrc
       list(:strains)
     end
 
-    def list_packages
-      list(:packages)
-    end
+    # def list_packages
+    #   list(:packages)
+    # end
 
     def list_manifests(start_date = nil, end_date = nil)
       start_date ||= days_ago(1)
       end_date ||= today
       api_get("/transfers/v1/incoming?licenseNumber=#{configuration.license_number}&lastModifiedStart=#{start_date}&lastModifiedEnd=#{end_date}").sort_by{|el| el['Id']}
+    end
+
+    def list_packages(delivery_id)
+      api_get("/transfers/v1/delivery/#{delivery_id}/packages?licenseNumber=#{configuration.license_number}")
     end
 
     def list(resource)
@@ -174,9 +178,8 @@ module Metrc
     end
 
     def sanitize(results)
-      results
-      # allowed_test_types = labtest_types.map { |el| el['Name'] }
-      # results.select { |result| allowed_test_types.include?(result[:LabTestTypeName]) }
+      allowed_test_types = labtest_types.map { |el| el['Name'] }
+      results.select { |result| allowed_test_types.include?(result[:LabTestTypeName]) }
     end
 
     def signed_in?
