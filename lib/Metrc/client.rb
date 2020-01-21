@@ -37,9 +37,7 @@ module Metrc
       response.parsed_response.is_a?(Hash) ? response.parsed_response : nil
     end
 
-    def inbox
-      list_manifests
-    end
+    ## CIM Common Interface Methods END
 
     def api_get(url, options = {})
       options[:basic_auth] = auth_headers
@@ -97,9 +95,13 @@ module Metrc
       list(:strains)
     end
 
-    # def list_packages
-    #   list(:packages)
-    # end
+    def list_units
+      list(:unitsofmeasure)
+    end
+
+    def list_categories
+      api_get('/items/v1/categories')
+    end
 
     def list_manifests(start_date = nil, end_date = nil)
       start_date ||= days_ago(1)
