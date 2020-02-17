@@ -94,4 +94,32 @@ describe Metrc::Client do
       expect { subject.change_plant_growth_phase(licenseNumber, []) }.not_to raise_error
     end
   end
+
+  describe '#create_package' do
+    context 'not for testing' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/packages/v1/create?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.create_package(licenseNumber, []) }.not_to raise_error
+      end
+    end
+
+    context 'for testing' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/packages/v1/create/testing?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.create_package(licenseNumber, [], true) }.not_to raise_error
+      end
+    end
+  end
 end
