@@ -134,6 +134,22 @@ module Metrc
       api_post("/packages/v1/create#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def change_package_item(license_number, resources, for_testing = false)
+      api_post("/packages/v1/change/item#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
+    def adjust_package(license_number, resources, for_testing = false)
+      api_post("/packages/v1/adjust#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
+    def finish_package(license_number, resources, for_testing = false)
+      api_post("/packages/v1/finish#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
+    def unfinish_package(license_number, resources, for_testing = false)
+      api_post("/packages/v1/unfinish#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def finish_harvest(license_number, resources)
       api_post("/harvests/v1/finish?licenseNumber=#{license_number}", body: resources.to_json)
     end

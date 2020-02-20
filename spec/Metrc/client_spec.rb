@@ -95,44 +95,160 @@ describe Metrc::Client do
     end
   end
 
-  describe '#create_package' do
-    context 'not for testing' do
-      before(:each) do
-        content_type = { 'content-type': 'application/json' }
-        stub_request(:post, "#{subject.uri}/packages/v1/create?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
-          .to_return(body: nil)
+  context 'packages' do
+    describe '#create_package' do
+      context 'not for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/create?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.create_package(licenseNumber, []) }.not_to raise_error
+        end
       end
 
-      it 'calls the endpoint' do
-        expect { subject.create_package(licenseNumber, []) }.not_to raise_error
+      context 'for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/create/testing?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.create_package(licenseNumber, [], true) }.not_to raise_error
+        end
       end
     end
 
-    context 'for testing' do
-      before(:each) do
-        content_type = { 'content-type': 'application/json' }
-        stub_request(:post, "#{subject.uri}/packages/v1/create/testing?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
-          .to_return(body: nil)
+    describe '#change_package_item' do
+      context 'not for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/change/item?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.change_package_item(licenseNumber, []) }.not_to raise_error
+        end
       end
 
-      it 'calls the endpoint' do
-        expect { subject.create_package(licenseNumber, [], true) }.not_to raise_error
+      context 'for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/change/item/testing?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.change_package_item(licenseNumber, [], true) }.not_to raise_error
+        end
+      end
+    end
+
+    describe '#adjust_package' do
+      context 'not for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/adjust?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.adjust_package(licenseNumber, []) }.not_to raise_error
+        end
+      end
+
+      context 'for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/adjust/testing?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.adjust_package(licenseNumber, [], true) }.not_to raise_error
+        end
+      end
+    end
+
+    describe '#finish_package' do
+      context 'not for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/finish?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.finish_package(licenseNumber, []) }.not_to raise_error
+        end
+      end
+
+      context 'for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/finish/testing?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.finish_package(licenseNumber, [], true) }.not_to raise_error
+        end
+      end
+    end
+
+    describe '#unfinish_package' do
+      context 'not for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/unfinish?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.unfinish_package(licenseNumber, []) }.not_to raise_error
+        end
+      end
+
+      context 'for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/packages/v1/unfinish/testing?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.unfinish_package(licenseNumber, [], true) }.not_to raise_error
+        end
       end
     end
   end
 
-  describe '#finish_harvest' do
-    before(:each) do
-      content_type = { 'content-type': 'application/json' }
-      stub_request(:post, "#{subject.uri}/harvests/v1/finish?licenseNumber=#{licenseNumber}")
-        .with(headers: content_type)
-        .to_return(body: nil)
-    end
+  context 'harvest' do
+    describe '#finish_harvest' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/harvests/v1/finish?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
 
-    it 'calls the endpoint' do
-      expect { subject.finish_harvest(licenseNumber, []) }.not_to raise_error
+      it 'calls the endpoint' do
+        expect { subject.finish_harvest(licenseNumber, []) }.not_to raise_error
+      end
     end
   end
 end
