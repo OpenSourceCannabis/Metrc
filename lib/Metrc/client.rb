@@ -180,6 +180,10 @@ module Metrc
       delete(:strains, license_number, id)
     end
 
+    def delete_transfer_template(license_number, id)
+      delete(:transfers, license_number, "templates/#{id}")
+    end
+
     def delete(resource, license_number, resource_id)
       api_delete("/#{resource}/v1/#{resource_id}?licenseNumber=#{license_number}")
     end
