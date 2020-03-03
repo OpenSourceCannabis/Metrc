@@ -198,5 +198,18 @@ describe Metrc::Client do
         expect { subject.finish_harvest(licenseNumber, []) }.not_to raise_error
       end
     end
+
+    describe '#remove_waste' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/harvests/v1/removewaste?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.remove_waste(licenseNumber, []) }.not_to raise_error
+      end
+    end
   end
 end
