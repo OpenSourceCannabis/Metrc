@@ -154,6 +154,10 @@ module Metrc
       api_post("/harvests/v1/finish?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def remove_waste(license_number, resources)
+      api_post("/harvests/v1/removewaste?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def create(resource, license_number, resources)
       api_post("/#{resource}/v1/create?licenseNumber=#{license_number}", body: resources.to_json)
     end
