@@ -158,6 +158,10 @@ module Metrc
       api_post("/harvests/v1/removewaste?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def create_transfer_template(license_number, resources)
+      api_post("/transfers/v1/templates?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def create(resource, license_number, resources)
       api_post("/#{resource}/v1/create?licenseNumber=#{license_number}", body: resources.to_json)
     end
