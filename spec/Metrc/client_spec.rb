@@ -228,5 +228,18 @@ describe Metrc::Client do
         expect { subject.delete_transfer_template(licenseNumber, template_id) }.not_to raise_error
       end
     end
+
+    describe '#create_transfer_template' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/transfers/v1/templates?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.create_transfer_template(licenseNumber, []) }.not_to raise_error
+      end
+    end
   end
 end
