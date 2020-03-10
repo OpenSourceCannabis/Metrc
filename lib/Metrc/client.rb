@@ -111,6 +111,16 @@ module Metrc
       api_get("/transfers/v1/templates?#{URI.encode_www_form(query_params)}")
     end
 
+    def list_harvests(license_number, range_start: nil, range_end: nil)
+      query_params = {}.tap do |hash|
+        hash['licenseNumber'] = license_number
+        hash['lastModifiedStart'] = range_start unless range_start.nil?
+        hash['lastModifiedEnd'] = range_end unless range_end.nil?
+      end
+
+      api_get("/harvests/v1/active?#{URI.encode_www_form(query_params)}")
+    end
+
     def list(resource, license_number)
       api_get("/#{resource}/v1/active?licenseNumber=#{license_number}").sort_by{|el| el['Id']}
     end

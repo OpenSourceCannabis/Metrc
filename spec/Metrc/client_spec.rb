@@ -211,6 +211,31 @@ describe Metrc::Client do
         expect { subject.remove_waste(licenseNumber, []) }.not_to raise_error
       end
     end
+
+    describe '#list_harvests' do
+      let(:query_params) { '' }
+
+      before do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:get, "#{subject.uri}/harvests/v1/active?licenseNumber=#{licenseNumber}#{query_params}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.list_harvests(licenseNumber) }.not_to raise_error
+      end
+
+      context 'with date range' do
+        let(:range_start) { '2020-02-20T10:00:00Z' }
+        let(:range_end) { '2020-02-25T10:00:00Z' }
+        let(:query_params) { "&lastModifiedStart=#{range_start}&lastModifiedEnd=#{range_end}" }
+
+        it 'calls the endpoint' do
+          expect { subject.list_harvests(licenseNumber, range_start: range_start, range_end: range_end) }.not_to raise_error
+        end
+      end
+    end
   end
 
   context 'transfers' do
