@@ -212,6 +212,18 @@ describe Metrc::Client do
       end
     end
 
+    describe '#get_harvest' do
+      let(:harvest_id) { 123 }
+      before(:each) do
+        stub_request(:get, "#{subject.uri}/harvests/v1/#{harvest_id}?licenseNumber=#{licenseNumber}")
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.get_harvest(licenseNumber, harvest_id) }.not_to raise_error
+      end
+    end
+
     describe '#list_harvests' do
       let(:query_params) { '' }
 
