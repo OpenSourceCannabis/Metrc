@@ -84,6 +84,10 @@ module Metrc
       get(:strains, id)
     end
 
+    def get_harvest(license_number, id)
+      api_get("/harvests/v1/#{id}?licenseNumber=#{license_number}")
+    end
+
     def get(resource, resource_id)
       api_get("/#{resource}/v1/#{resource_id}")
     end
