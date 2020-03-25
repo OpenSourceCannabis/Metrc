@@ -96,6 +96,34 @@ describe Metrc::Client do
   end
 
   context 'packages' do
+    describe '#create_harvest_package' do
+      context 'not for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/harvests/v1/create/packages?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.create_harvest_package(licenseNumber, []) }.not_to raise_error
+        end
+      end
+
+      context 'for testing' do
+        before(:each) do
+          content_type = { 'content-type': 'application/json' }
+          stub_request(:post, "#{subject.uri}/harvests/v1/create/packages/testing?licenseNumber=#{licenseNumber}")
+            .with(headers: content_type)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.create_harvest_package(licenseNumber, [], true) }.not_to raise_error
+        end
+      end
+    end
+
     describe '#create_package' do
       context 'not for testing' do
         before(:each) do
