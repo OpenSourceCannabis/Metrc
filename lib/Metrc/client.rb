@@ -154,6 +154,10 @@ module Metrc
       api_post("/plantbatches/v1/destroy?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def create_plant_batch_package(license_number, resources)
+      api_post("/plantbatches/v1/createpackages?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def create_harvest_package(license_number, resources, for_testing = false)
       api_post("/harvests/v1/create/packages#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
     end
