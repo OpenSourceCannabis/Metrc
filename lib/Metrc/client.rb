@@ -158,6 +158,10 @@ module Metrc
       api_post("/harvests/v1/create/packages#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def create_plantings_package(license_number, resources)
+      api_post("/packages/v1/create/plantings?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def create_package(license_number, resources, for_testing = false)
       api_post("/packages/v1/create#{for_testing ? "/testing" : ''}?licenseNumber=#{license_number}", body: resources.to_json)
     end
