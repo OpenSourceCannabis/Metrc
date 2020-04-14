@@ -95,6 +95,19 @@ describe Metrc::Client do
     end
   end
 
+  context 'batches' do
+    context '#list_plant_batches' do
+      before do
+        stub_request(:get, "#{subject.uri}/plantbatches/v1/active?licenseNumber=#{licenseNumber}")
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.list_plant_batches(licenseNumber) }.not_to raise_error
+      end
+    end
+  end
+
   context 'packages' do
     describe '#create_plant_batch_package' do
       before(:each) do
