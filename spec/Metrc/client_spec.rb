@@ -95,7 +95,33 @@ describe Metrc::Client do
     end
   end
 
+  context 'batches' do
+    context '#list_plant_batches' do
+      before do
+        stub_request(:get, "#{subject.uri}/plantbatches/v1/active?licenseNumber=#{licenseNumber}")
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.list_plant_batches(licenseNumber) }.not_to raise_error
+      end
+    end
+  end
+
   context 'packages' do
+    describe '#create_plant_batch_package' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/plantbatches/v1/createpackages?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.create_plant_batch_package(licenseNumber, []) }.not_to raise_error
+      end
+    end
+
     describe '#create_plantings_package' do
       before(:each) do
         content_type = { 'content-type': 'application/json' }
