@@ -32,10 +32,12 @@ module Metrc
       puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.get(url, options)
       raise_request_errors
+
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
       end
+
+      response
     end
 
     def api_post(url, options = {})
@@ -43,10 +45,12 @@ module Metrc
       puts "\nMetrc API Request debug\nclient.post('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.post(url, options)
       raise_request_errors
+
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
       end
+
+      response
     end
 
     def api_delete(url, options = {})
@@ -54,10 +58,12 @@ module Metrc
       puts "\nMetrc API Request debug\nclient.delete('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.delete(url, options)
       raise_request_errors
+
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
       end
+
+      response
     end
 
     def api_put(url, options = {})
@@ -65,10 +71,12 @@ module Metrc
       puts "\nMetrc API Request debug\nclient.put('#{url}', #{options})\n########################\n" if debug
       self.response = self.class.put(url, options)
       raise_request_errors
+
       if debug
         puts "\nMetrc API Response debug\n#{response.to_s[0..360]}\n[200 OK]\n########################\n"
-        response
       end
+
+      response
     end
 
     # GET
