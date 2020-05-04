@@ -112,7 +112,7 @@ describe Metrc::Client do
     describe '#create_plant_batch_package' do
       before(:each) do
         content_type = { 'content-type': 'application/json' }
-        stub_request(:post, "#{subject.uri}/plantbatches/v1/createpackages?licenseNumber=#{licenseNumber}")
+        stub_request(:post, "#{subject.uri}/plantbatches/v1/create/packages/frommotherplant?licenseNumber=#{licenseNumber}")
           .with(headers: content_type)
           .to_return(body: nil)
       end
