@@ -112,13 +112,26 @@ describe Metrc::Client do
     describe '#create_plant_batch_package' do
       before(:each) do
         content_type = { 'content-type': 'application/json' }
-        stub_request(:post, "#{subject.uri}/plantbatches/v1/create/packages/frommotherplant?licenseNumber=#{licenseNumber}")
+        stub_request(:post, "#{subject.uri}/plantbatches/v1/createpackages?licenseNumber=#{licenseNumber}")
           .with(headers: content_type)
           .to_return(body: nil)
       end
 
       it 'calls the endpoint' do
         expect { subject.create_plant_batch_package(licenseNumber, []) }.not_to raise_error
+      end
+    end
+
+    describe '#create_plant_batch_package_from_mother' do
+      before(:each) do
+        content_type = { 'content-type': 'application/json' }
+        stub_request(:post, "#{subject.uri}/plantbatches/v1/create/packages/frommotherplant?licenseNumber=#{licenseNumber}")
+          .with(headers: content_type)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.create_plant_batch_package_from_mother(licenseNumber, []) }.not_to raise_error
       end
     end
 
