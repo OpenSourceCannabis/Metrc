@@ -208,6 +208,10 @@ module Metrc
       api_post("/packages/v1/unfinish?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def move_harvest(license_number, resources)
+      api_put("/harvests/v1/move?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def finish_harvest(license_number, resources)
       api_post("/harvests/v1/finish?licenseNumber=#{license_number}", body: resources.to_json)
     end

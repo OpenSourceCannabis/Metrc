@@ -284,7 +284,7 @@ describe Metrc::Client do
         stub_request(:post, "#{subject.uri}/harvests/v1/removewaste?licenseNumber=#{licenseNumber}")
           .with(headers: headers)
           .to_return(body: nil)
-    end
+     end
 
       it 'calls the endpoint' do
         expect { subject.remove_waste(licenseNumber, []) }.not_to raise_error
@@ -295,12 +295,24 @@ describe Metrc::Client do
       let(:harvest_id) { 123 }
       before(:each) do
         stub_request(:get, "#{subject.uri}/harvests/v1/#{harvest_id}?licenseNumber=#{licenseNumber}")
-        .with(headers: headers)
-        .to_return(body: nil)
+          .with(headers: headers)
+          .to_return(body: nil)
       end
 
       it 'calls the endpoint' do
         expect { subject.get_harvest(licenseNumber, harvest_id) }.not_to raise_error
+      end
+    end
+
+    describe '#move_harvest' do
+      before do
+        stub_request(:put, "#{subject.uri}/harvests/v1/move?licenseNumber=#{licenseNumber}")
+          .with(headers: headers)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.move_harvest(licenseNumber, []) }.not_to raise_error
       end
     end
 
@@ -312,7 +324,7 @@ describe Metrc::Client do
         stub_request(:get, "#{subject.uri}/harvests/v1/active?licenseNumber=#{licenseNumber}#{query_params}")
           .with(headers: headers)
           .to_return(body: nil)
-    end
+      end
 
       it 'calls the endpoint' do
         expect { subject.list_harvests(licenseNumber) }.not_to raise_error
