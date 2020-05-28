@@ -7,6 +7,9 @@ describe Metrc::Client do
 
   let(:subject) { described_class.new(user_key: $spec_credentials['user_key']) }
   let(:licenseNumber) { 'CML17-0000001' }
+  let(:headers) do
+    { 'content-type': 'application/json' }
+  end
 
   describe '#api_post' do
     let(:api_url) { "/foo/v1/bar?licenseNumber=#{licenseNumber}" }
@@ -15,10 +18,10 @@ describe Metrc::Client do
 
     before(:each) do
       stub_request(:post, "#{subject.uri}#{api_url}")
-        .to_return(status: status, body: body, headers: { 'content-type': 'application/json' })
+        .to_return(status: status, body: body, headers: headers)
     end
 
-    context 'Metrc API returns 400' do
+    context 'with a 400 response' do
       let(:status) { 400 }
       it 'raises an error' do
         expect { api_post }.to(raise_error(Metrc::Errors::BadRequest))
@@ -35,58 +38,46 @@ describe Metrc::Client do
       end
     end
 
-    context 'Metrc API returns 401' do
+    context 'with a 401 response' do
       let(:status) { 401 }
       it 'raises an error' do
         expect { api_post }.to(raise_error(Metrc::Errors::Unauthorized))
       end
     end
 
-    context 'Metrc API returns 403' do
+    context 'with a 403 response' do
       let(:status) { 403 }
       it 'raises an error' do
         expect { api_post }.to(raise_error(Metrc::Errors::Forbidden))
       end
     end
 
-    context 'Metrc API returns 404' do
+    context 'with a 404 response' do
       let(:status) { 404 }
       it 'raises an error' do
         expect { api_post }.to(raise_error(Metrc::Errors::NotFound))
       end
     end
 
-    context 'Metrc API returns 429' do
+    context 'with a 429 response' do
       let(:status) { 429 }
       it 'raises an error' do
         expect { api_post }.to(raise_error(Metrc::Errors::TooManyRequests))
       end
     end
 
-    context 'Metrc API returns 500' do
+    context 'with a 500 response' do
       let(:status) { 500 }
       it 'raises an error' do
         expect { api_post }.to(raise_error(Metrc::Errors::InternalServerError))
       end
-
-      # TODO: enhance error capturing for 500s once response format is known
-      #context 'with a simple error' do
-      #  let(:body) do
-      #    { 'Message': 'No data was submitted.' }.to_json
-      #  end
-
-      #  it 'stores the error message' do
-      #    expect { api_post }.to(raise_error('No data was submitted.'))
-      #  end
-      #end
     end
   end
 
   describe '#change_plant_growth_phase' do
     before(:each) do
-      content_type = { 'content-type': 'application/json' }
       stub_request(:post, "#{subject.uri}/plants/v1/changegrowthphases?licenseNumber=#{licenseNumber}")
-        .with(headers: content_type)
+        .with(headers: headers)
         .to_return(body: nil)
     end
 
@@ -99,6 +90,7 @@ describe Metrc::Client do
     context '#list_plant_batches' do
       before do
         stub_request(:get, "#{subject.uri}/plantbatches/v1/active?licenseNumber=#{licenseNumber}")
+          .with(headers: headers)
           .to_return(body: nil)
       end
 
@@ -110,23 +102,41 @@ describe Metrc::Client do
 
   context 'packages' do
     describe '#create_plant_batch_package' do
-      before(:each) do
-        content_type = { 'content-type': 'application/json' }
-        stub_request(:post, "#{subject.uri}/plantbatches/v1/create/plantings?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
-          .to_return(body: nil)
+      after do
+        configure_client
       end
 
-      it 'calls the endpoint' do
-        expect { subject.create_plant_batch_package(licenseNumber, []) }.not_to raise_error
+      context 'with a migrated state' do
+        before do
+          stub_request(:post, "#{subject.uri}/plantbatches/v1/create/plantings?licenseNumber=#{licenseNumber}")
+            .with(headers: headers)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.create_plant_batch_package(licenseNumber, []) }.not_to raise_error
+        end
+      end
+
+      context 'with a non migrated state' do
+        before do
+          configure_client(:ma)
+
+          stub_request(:post, "#{subject.uri}/plantbatches/v1/createpackages?licenseNumber=#{licenseNumber}")
+            .with(headers: headers)
+            .to_return(body: nil)
+        end
+
+        it 'calls the endpoint' do
+          expect { subject.create_plant_batch_package(licenseNumber, []) }.not_to raise_error
+        end
       end
     end
 
     describe '#create_plant_batch_package_from_mother' do
       before(:each) do
-        content_type = { 'content-type': 'application/json' }
         stub_request(:post, "#{subject.uri}/plantbatches/v1/create/packages/frommotherplant?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
       end
 
@@ -137,11 +147,10 @@ describe Metrc::Client do
 
     describe '#create_plantings_package' do
       before(:each) do
-        content_type = { 'content-type': 'application/json' }
         stub_request(:post, "#{subject.uri}/packages/v1/create/plantings?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
-      end
+    end
 
       it 'calls the endpoint' do
         expect { subject.create_plantings_package(licenseNumber, []) }.not_to raise_error
@@ -151,9 +160,8 @@ describe Metrc::Client do
     describe '#create_harvest_package' do
       context 'not for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/harvests/v1/create/packages?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -164,9 +172,8 @@ describe Metrc::Client do
 
       context 'for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/harvests/v1/create/packages/testing?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -179,9 +186,8 @@ describe Metrc::Client do
     describe '#create_package' do
       context 'not for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/packages/v1/create?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -192,9 +198,8 @@ describe Metrc::Client do
 
       context 'for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/packages/v1/create/testing?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -207,9 +212,8 @@ describe Metrc::Client do
     describe '#change_package_item' do
       context 'not for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/packages/v1/change/item?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -222,9 +226,8 @@ describe Metrc::Client do
     describe '#adjust_package' do
       context 'not for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/packages/v1/adjust?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -237,9 +240,8 @@ describe Metrc::Client do
     describe '#finish_package' do
       context 'not for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/packages/v1/finish?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -252,9 +254,8 @@ describe Metrc::Client do
     describe '#unfinish_package' do
       context 'not for testing' do
         before(:each) do
-          content_type = { 'content-type': 'application/json' }
           stub_request(:post, "#{subject.uri}/packages/v1/unfinish?licenseNumber=#{licenseNumber}")
-            .with(headers: content_type)
+            .with(headers: headers)
             .to_return(body: nil)
         end
 
@@ -268,9 +269,8 @@ describe Metrc::Client do
   context 'harvest' do
     describe '#finish_harvest' do
       before(:each) do
-        content_type = { 'content-type': 'application/json' }
         stub_request(:post, "#{subject.uri}/harvests/v1/finish?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
       end
 
@@ -281,11 +281,10 @@ describe Metrc::Client do
 
     describe '#remove_waste' do
       before(:each) do
-        content_type = { 'content-type': 'application/json' }
         stub_request(:post, "#{subject.uri}/harvests/v1/removewaste?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
-      end
+    end
 
       it 'calls the endpoint' do
         expect { subject.remove_waste(licenseNumber, []) }.not_to raise_error
@@ -296,7 +295,8 @@ describe Metrc::Client do
       let(:harvest_id) { 123 }
       before(:each) do
         stub_request(:get, "#{subject.uri}/harvests/v1/#{harvest_id}?licenseNumber=#{licenseNumber}")
-          .to_return(body: nil)
+        .with(headers: headers)
+        .to_return(body: nil)
       end
 
       it 'calls the endpoint' do
@@ -310,9 +310,9 @@ describe Metrc::Client do
       before do
         content_type = { 'content-type': 'application/json' }
         stub_request(:get, "#{subject.uri}/harvests/v1/active?licenseNumber=#{licenseNumber}#{query_params}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
-      end
+    end
 
       it 'calls the endpoint' do
         expect { subject.list_harvests(licenseNumber) }.not_to raise_error
@@ -335,9 +335,9 @@ describe Metrc::Client do
       before(:each) do
         content_type = { 'content-type': 'application/json' }
         stub_request(:delete, "#{subject.uri}/transfers/v1/templates/#{template_id}?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
-      end
+    end
 
       let(:template_id) { 1 }
 
@@ -350,9 +350,9 @@ describe Metrc::Client do
       before(:each) do
         content_type = { 'content-type': 'application/json' }
         stub_request(:post, "#{subject.uri}/transfers/v1/templates?licenseNumber=#{licenseNumber}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
-      end
+    end
 
       it 'calls the endpoint' do
         expect { subject.create_transfer_template(licenseNumber, []) }.not_to raise_error
@@ -365,9 +365,9 @@ describe Metrc::Client do
       before do
         content_type = { 'content-type': 'application/json' }
         stub_request(:get, "#{subject.uri}/transfers/v1/templates?licenseNumber=#{licenseNumber}#{query_params}")
-          .with(headers: content_type)
+          .with(headers: headers)
           .to_return(body: nil)
-      end
+    end
 
       it 'calls the endpoint' do
         expect { subject.list_transfer_templates(licenseNumber) }.not_to raise_error
