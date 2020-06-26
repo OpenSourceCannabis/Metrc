@@ -1,0 +1,72 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch
+
+    steps:
+      - checkout
+      - run:
+          name: Bundler install
+          command: gem install bundler -v '2.0.2'
+      - restore_cache:
+          key: metrc-bundle-v1-{{ checksum "Gemfile.lock" }}
+
+      - run: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: metrc-bundle-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+  rubocop:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch
+
+    steps:
+      - checkout
+      - run:
+          name: Bundler install
+          command: gem install bundler -v '2.0.2'
+      - run:
+          name: Install any missing gems / dependencies / extensions
+          command: bundle install --path vendor/bundle
+      - run:
+          name: Lint and code styling
+          command: bundle exec rubocop
+
+  unit_tests:
+    docker:
+      - image: circleci/ruby:2.6.6-stretch
+
+    steps:
+      - checkout
+      - run:
+          name: Bundler install
+          command: gem install bundler -v '2.0.2'
+      - restore_cache:
+          keys:
+            - metrc-bundle-v1-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install any missing gems / dependencies / extensions
+          command: bundle install --path vendor/bundle
+      - run:
+          name: Run rspec
+          command: |
+            bundle exec rspec --out test_results/rspec.xml --format progress
+      # Save test results for timing analysis
+      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: test_results
+
+workflows:
+  version: 2
+  run_tests:
+    jobs:
+      - build
+      - rubocop:
+          requires:
+            - build
+      - unit_tests:
+          requires:
+            - build

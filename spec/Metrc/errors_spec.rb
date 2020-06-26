@@ -4,7 +4,7 @@ describe Metrc::Errors do
   let(:subject) { described_class }
 
   describe '.parse_request_errors' do
-    let(:body) { Hash.new }
+    let(:body) { Hash.new } # rubocop:disable Style/EmptyLiteral
     let(:response) do
       double(HTTParty::Response, parsed_response: body)
     end

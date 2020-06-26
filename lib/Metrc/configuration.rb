@@ -8,8 +8,7 @@ module Metrc
                   :sandbox
 
     def incomplete?
-      [:api_key, :state].any? { |e| self.send(e).nil? }
+      %i[api_key state].any? {|e| self.send(e).nil? }
     end
-
   end
 end
