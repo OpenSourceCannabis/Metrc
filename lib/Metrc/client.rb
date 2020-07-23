@@ -168,6 +168,10 @@ module Metrc
       api_post("/plantbatches/v1/create/packages/frommotherplant?licenseNumber=#{license_number}", body: resources.to_json)
     end
 
+    def split_plant_batch(license_number, resources)
+      api_post("/plantbatches/v1/split?licenseNumber=#{license_number}", body: resources.to_json)
+    end
+
     def list_plant_batches(license_number)
       api_get("/plantbatches/v1/active?licenseNumber=#{license_number}")
     end

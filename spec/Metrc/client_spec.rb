@@ -110,6 +110,18 @@ describe Metrc::Client do
         expect { subject.create_plant_batch_plantings(licenseNumber, []) }.not_to raise_error
       end
     end
+
+    describe '#split_plant_batch' do
+      before do
+        stub_request(:post, "#{subject.uri}/plantbatches/v1/split?licenseNumber=#{licenseNumber}")
+          .with(headers: headers)
+          .to_return(body: nil)
+      end
+
+      it 'calls the endpoint' do
+        expect { subject.split_plant_batch(licenseNumber, []) }.not_to raise_error
+      end
+    end
   end
 
   context 'packages' do
