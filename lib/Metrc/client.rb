@@ -29,7 +29,7 @@ module Metrc
 
     def api_get(url, options = {})
       options[:basic_auth] = auth_headers
-      puts "\nMetrc API Request debug\nclient.get('#{url}', #{options})\n########################\n" if debug
+      puts "\nMetrc API Request debug\nclient.get('#{self.uri}/#{url}', #{options})\n########################\n" if debug
       self.response = self.class.get(url, options)
       raise_request_errors
 
@@ -40,7 +40,7 @@ module Metrc
 
     def api_post(url, options = {})
       options[:basic_auth] = auth_headers
-      puts "\nMetrc API Request debug\nclient.post('#{url}', #{options})\n########################\n" if debug
+      puts "\nMetrc API Request debug\nclient.post('#{self.uri}/#{url}', #{options})\n########################\n" if debug
       self.response = self.class.post(url, options)
       raise_request_errors
 
@@ -51,7 +51,7 @@ module Metrc
 
     def api_delete(url, options = {})
       options[:basic_auth] = auth_headers
-      puts "\nMetrc API Request debug\nclient.delete('#{url}', #{options})\n########################\n" if debug
+      puts "\nMetrc API Request debug\nclient.delete('#{self.uri}/#{url}', #{options})\n########################\n" if debug
       self.response = self.class.delete(url, options)
       raise_request_errors
 
@@ -62,7 +62,7 @@ module Metrc
 
     def api_put(url, options = {})
       options[:basic_auth] = auth_headers
-      puts "\nMetrc API Request debug\nclient.put('#{url}', #{options})\n########################\n" if debug
+      puts "\nMetrc API Request debug\nclient.put('#{self.uri}/#{url}',, #{options})\n########################\n" if debug
       self.response = self.class.put(url, options)
       raise_request_errors
 
